@@ -1,0 +1,10 @@
+.mount-table-view-block {
+    background-color: red;
+    div[role="row"] {
+        background-color: yellow;
+        z-index: 0;
+    }
+    .delete-mount {
+        z-index: 999999;
+    }
+}

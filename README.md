@@ -1,3 +1,7 @@
+Enviorment:
+node version: v 16.17.0
+npm version: 8.15.0
+
 # Getting Started with the iTwin Viewer Create React App Template
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
