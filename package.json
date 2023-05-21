@@ -60,6 +60,7 @@
     "build:backend": "tsc -p tsconfig.backend.json",
     "start:frontend": "serve -s build",
     "start:backend": "node build/backend/main.js",
+    "start:connectorServer": "node build/connectorServer/main.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

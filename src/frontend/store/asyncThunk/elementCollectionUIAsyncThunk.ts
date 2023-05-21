@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { TowerDetailRpcInterface } from "../../../common/RpcInterfaces/TowerDetailRpcInterface";
 import { updateTowerElements, updateTowerPhysicalElementTypes } from "../slices/elementCollectionUi";
 import { IModelDeleteElementRpcInterface } from "../../../common/RpcInterfaces/IModelDeleteElementRpcInterface";
+import { IModelUpdateElementRpcInterface } from "../../../common/RpcInterfaces/IModelUpdateElementRpcInterface";
 
 const asyncThunkName = "ElementCollectionUIAsyncThunk"
 
@@ -58,6 +59,28 @@ export const deleteElementByIdThunk = createAsyncThunk(
                 // thunkAPI.dispatch(updateTowerElements(deleteElementResult.data))
             } else {
                 thunkAPI.rejectWithValue("TowerDetailRpcInterface:deleteElementResult Request Failed")
+            }
+        } catch (e: any) {
+            console.log(e);
+            return thunkAPI.rejectWithValue(e);
+        }
+    }
+);
+
+export const updateIModelElementThunk = createAsyncThunk(
+    `${asyncThunkName}/updateIModelElementThunk`,
+    async(data: any, thunkAPI) => {
+        try {
+            console.log("inside updateIModelElementThunk");
+            console.log(data);
+            const updateIModelElementThunkResult: any = await IModelUpdateElementRpcInterface.getClient().updateECClassElementById(data.iModelRpcProps, data.updatedElementData);
+            console.log("updateIModelElementThunkResult response");
+            console.log(updateIModelElementThunkResult);
+            if (updateIModelElementThunkResult.status == 'SUCCESS') {
+                console.log("------ successed")
+                // thunkAPI.dispatch(updateTowerElements(updateIModelElementThunkResult.data))
+            } else {
+                thunkAPI.rejectWithValue("TowerDetailRpcInterface:updateIModelElementThunkResult Request Failed")
             }
         } catch (e: any) {
             console.log(e);

@@ -17,6 +17,8 @@ import { ClientAuthorization } from "./ClientAuthorization";
 import * as dotenv from "dotenv";
 import { IModelDeleteElementRpcImpl } from "./RpcImpl/IModelDeleteElementRpcImpl";
 import { TowerDetailRpcImpl } from "./RpcImpl/TowerDetailRpcImpl";
+import { IModelUpdateElementRpcImpl } from "./RpcImpl/IModelUpdateElementRpcImpl";
+import { ConnectorIModelCreationRpcImpl } from "./RpcImpl/ConnectorIModelCreationRpcImpl";
 
 const envconfigs = dotenv.config();
 console.log('envconfigs');
@@ -46,6 +48,7 @@ IModelHost.startup(config);
 IModelChangeSetRpcImpl.register();
 IModelBriefcaseRpcImpl.register();
 IModelDeleteElementRpcImpl.register();
+IModelUpdateElementRpcImpl.register();
 TowerDetailRpcImpl.register();
 
 

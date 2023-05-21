@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ElementCollectionUiProviderSliceState } from '../../DTO/StoreSlice/ElementCollectionUiProviderSliceDto';
-import { getAllPhysicalElementsByTypeThunk, getTowerPhysicalElementTypesThunk, deleteElementByIdThunk } from '../asyncThunk/elementCollectionUIAsyncThunk';
+import { getAllPhysicalElementsByTypeThunk, getTowerPhysicalElementTypesThunk, deleteElementByIdThunk, updateIModelElementThunk } from '../asyncThunk/elementCollectionUIAsyncThunk';
 
 
 // Define the initial state using that type
@@ -10,7 +10,10 @@ const initialState: ElementCollectionUiProviderSliceState = {
     error_msg: "",
     getTowerPhysicalElementTypesRequestState: "",
     getAllPhysicalElementsByTypeThunkRequestState: "",
-    deleteElementByIdThunkRequestState: ""
+    deleteElementByIdThunkRequestState: "",
+    updateIModelElementThunkRequestState: "",
+    iModelCreated: false,
+    iModelCreationRequestStatus: "",
 }
 
 // getLatestChangesetDetailsThunk
@@ -62,6 +65,22 @@ const deleteElementByIdThunkActionRejected = (state: any, action: PayloadAction<
     state.deleteElementByIdThunkRequestState = "Rejected";
 };
 
+const updateIModelElementThunkActionPending = (state: any) => {
+    console.log("inside updateIModelElementThunkActionPending");
+    state.error_msg = '';
+    state.updateIModelElementThunkRequestState = "Pending";
+};
+const updateIModelElementThunkActionFulFilled = (state: any, action: any) => {
+    console.log("inside updateIModelElementThunkActionFulFilled");
+    state.error_msg = '';
+    state.updateIModelElementThunkRequestState = "Fulfilled";
+};
+const updateIModelElementThunkActionRejected = (state: any, action: PayloadAction<any>) => {
+    console.log("inside updateIModelElementThunkActionRejected");
+    state.error_msg = action.payload;
+    state.updateIModelElementThunkRequestState = "Rejected";
+};
+
 export const elementCollectionUiSlice = createSlice({
     name: 'elementCollectionUi',
     // `createSlice` will infer the state type from the `initialState` argument
@@ -95,6 +114,11 @@ export const elementCollectionUiSlice = createSlice({
         builder.addCase(deleteElementByIdThunk.pending, deleteElementByIdThunkActionPending);
         builder.addCase(deleteElementByIdThunk.fulfilled, deleteElementByIdThunkActionFulFilled);
         builder.addCase(deleteElementByIdThunk.rejected, deleteElementByIdThunkActionRejected);
+        
+        // deleteElementByIdThunk
+        builder.addCase(updateIModelElementThunk.pending, updateIModelElementThunkActionPending);
+        builder.addCase(updateIModelElementThunk.fulfilled, updateIModelElementThunkActionFulFilled);
+        builder.addCase(updateIModelElementThunk.rejected, updateIModelElementThunkActionRejected);
         
     },
 })

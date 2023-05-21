@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table, DefaultCell } from '@itwin/itwinui-react';
+import { Table, DefaultCell, LabeledInput, Button } from '@itwin/itwinui-react';
 import type { CellProps, CellRendererProps, Column } from 'react-table';
 
 export const SampleTableComponent = () => {
@@ -11,6 +11,8 @@ export const SampleTableComponent = () => {
         status: 'positive' | 'negative' | 'warning' | undefined;
         subRows: TableDataType[];
     };
+
+    const [selectedRow, setSelectedRow] = React.useState(''); 
 
     const generateItem = React.useCallback(
         (index: number, parentRow = '', depth = 0): TableDataType => {
@@ -40,6 +42,22 @@ export const SampleTableComponent = () => {
                 .map((_, index) => generateItem(index)),
         [generateItem]
     );
+    const inputChangeHandler = React.useCallback((e: any) => {
+        console.log("e.target.value");
+        console.log(e.target.value);
+    }, [])
+
+    const saveInputChangedData = React.useCallback((e: any, row: any, value: any) => {
+        console.log("inside saveInputChangedData");
+        console.log('row.id: ', row.id);
+        console.log('value: ', value);
+    }, []);
+    const constructInoutButtons = (row: any, inputValue: string) => {
+        return <div style={{ display:"flex" }}>
+            <Button size='small' onClick={(e: any) => saveInputChangedData(e, row, 'sdf')}>Save</Button>
+            <Button size='small'>Reset {inputValue}</Button>
+        </div>
+    }
 
     const columns = React.useMemo(
         (): Column<TableDataType>[] => [
@@ -54,7 +72,13 @@ export const SampleTableComponent = () => {
                 Header: 'Price',
                 accessor: 'price',
                 Cell: (props: CellProps<TableDataType>) => {
-                    return <>${props.value}</>;
+                    if(selectedRow == props.row.id) {
+                        return <LabeledInput label='Label' placeholder='Placeholder' message={constructInoutButtons(props.row, props.value)} defaultValue={props.value} onChange={inputChangeHandler} />
+
+
+                    } else {
+                        return <>${props.value}</>;
+                    }
                 },
             },
             {
@@ -70,7 +94,7 @@ export const SampleTableComponent = () => {
                 },
             },
         ],
-        []
+        [selectedRow]
     );
 
     const rowProps = React.useCallback((row: any) => {
@@ -78,6 +102,11 @@ export const SampleTableComponent = () => {
             status: row.original.status,
         };
     }, []);
+
+    const onRowClickHandler  = React.useCallback((e: any, row: any) => {
+        console.log(`Row clicked: ${row.id} : data : ${JSON.stringify(row.original)}`);
+        setSelectedRow(row.id);
+    }, [])
 
     return (
         <div style={{ minWidth: 'min(100%, 350px)' }}>
@@ -87,6 +116,7 @@ export const SampleTableComponent = () => {
                 data={data}
                 rowProps={rowProps}
                 density='condensed'
+                onRowClick={onRowClickHandler}
             />
         </div>
     );

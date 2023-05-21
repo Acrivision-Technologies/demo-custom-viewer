@@ -4,7 +4,7 @@
       "module": "commonjs",
       "outDir": "./build"
     },
-    "include": ["./src/backend/*.ts", "./src/common/*.ts"],
+    "include": ["./src/backend/*.ts", "./src/common/*.ts", "./src/connectorServer/*.ts"],
     "exclude": ["build", "node_modules"]
   }
   

@@ -7,7 +7,9 @@ import { RpcInterfaceDefinition, IModelReadRpcInterface, IModelTileRpcInterface,
 import { IModelChangeSetRpcInterface } from "./IModelChangeSetRpcInterface";
 import { IModelBriefcaseRpcInterface } from "./RpcInterfaces/IModelBriefcaseRpcInterface";
 import { IModelDeleteElementRpcInterface } from "./RpcInterfaces/IModelDeleteElementRpcInterface";
+import { IModelUpdateElementRpcInterface } from "./RpcInterfaces/IModelUpdateElementRpcInterface";
 import { TowerDetailRpcInterface } from "./RpcInterfaces/TowerDetailRpcInterface";
+import { ConnectorIModelCreationInterface } from "./RpcInterfaces/ConnectorIModelCreationInterface";
 
 /**
  * Returns a list of RPCs supported by this application
@@ -20,6 +22,9 @@ export default function getSupportedRpcs(): RpcInterfaceDefinition[] {
     SnapshotIModelRpcInterface,
     IModelBriefcaseRpcInterface,
     IModelDeleteElementRpcInterface,
-    TowerDetailRpcInterface
+    IModelUpdateElementRpcInterface,
+    TowerDetailRpcInterface,
   ];
 }
+
+

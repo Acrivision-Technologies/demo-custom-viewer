@@ -8,5 +8,5 @@ export abstract class IModelBriefcaseRpcInterface extends RpcInterface {
     public static interfaceName = "IModelBriefcaseRpcInterface";
   
     public static getClient(): IModelBriefcaseRpcInterface { return RpcManager.getClientForInterface(this); }
-    public async loadBriefcaseAndRetriveBriefcaseId (_requestParams: IModelRpcProps, _changeSetIndex: number): Promise<any> { return this.forward.apply(this, arguments as any) as any; }
+    public async loadBriefcaseAndRetriveBriefcaseId(_requestParams: IModelRpcProps, _changeSetIndex: number): Promise<any> { return this.forward.apply(this, arguments as any) as any; }
   }

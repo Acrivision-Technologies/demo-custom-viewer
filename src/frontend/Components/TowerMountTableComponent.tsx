@@ -17,6 +17,8 @@ import { IModelDeleteElementRpcInterface } from "../../common/RpcInterfaces/IMod
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { deleteElementByIdThunk } from "../store/asyncThunk/elementCollectionUIAsyncThunk";
 import { RootState } from "../store";
+import { TableInputBlockComponent } from "./CustomFormComponents/TableInputBlockComponent";
+
 
 export const TowerMountTableComponent = (props: any) => {
     type TableDataType = {
@@ -59,7 +61,7 @@ export const TowerMountTableComponent = (props: any) => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        const info: any = IModelChangeSetRpcInterface.getClient().fetchInfo({ key:"hello", iModelId: appConfig.auth.iModelId, iTwinId: appConfig.auth.iTwinId });
+        const info: any = IModelChangeSetRpcInterface.getClient().fetchInfo({ key: "hello", iModelId: appConfig.auth.iModelId, iTwinId: appConfig.auth.iTwinId });
         console.log("info");
         console.log(info);
     }, []);
@@ -67,6 +69,7 @@ export const TowerMountTableComponent = (props: any) => {
     useEffect(() => {
         setTableData(props.mountData);
     }, [props.mountData])
+
 
 
     const columns = React.useMemo(
@@ -101,7 +104,11 @@ export const TowerMountTableComponent = (props: any) => {
                 accessor: 'elevation',
                 width: 130,
                 Cell: (props: CellProps<TableDataType>) => {
-                    return <>{parseFloat(props.value).toFixed(4)}</>;
+                    if(currentRowId == props.row.id) {
+                        return <TableInputBlockComponent row={props.row} value={props.value} field="elevation" iModelRpcProps={iModelRpcProps}/>
+                    } else {
+                        return <>{parseFloat(props.value).toFixed(4)}</>;
+                    }
                 },
             },
             {
@@ -221,30 +228,27 @@ export const TowerMountTableComponent = (props: any) => {
         [currentRowId, tableData]
     );
 
+    const onRowClickHandler = useCallback((event: React.MouseEvent, row: any) => {
+        console.log(`Row clicked: ${JSON.stringify(row.original)}`);
+        props.onElementToZoomHandler(row.original.id)
+        setCurrentRowId(row.id);
+    }, []);
 
-    const onRowClickHandler = async (e: React.MouseEvent, row: any) => {
-
-        console.log("inside onRowClickHandler");
-        console.log(row);
-        // props.onElementToZoomHandler(row.original.id)
-
-        
-    }
-
-    const getAuthorization = async(): Promise<Authorization> => {
+    const getAuthorization = async (): Promise<Authorization> => {
         if (!IModelApp.authorizationClient)
-          throw new Error("AuthorizationClient is not defined. Most likely IModelApp.startup was not called yet.");
-    
+            throw new Error("AuthorizationClient is not defined. Most likely IModelApp.startup was not called yet.");
+
         const token = await IModelApp.authorizationClient.getAccessToken();
         const parts = token.split(" ");
         return parts.length === 2
-          ? { scheme: parts[0], token: parts[1] }
-          : { scheme: "Bearer", token };
+            ? { scheme: parts[0], token: parts[1] }
+            : { scheme: "Bearer", token };
     }
 
-    const onDeleteButtonClickHandler = async(e: any, row: any) => {
+    const onDeleteButtonClickHandler = useCallback(async (e: any, row: any) => {
 
         e.preventDefault();
+        e.stopPropagation();
         // console.log('props.imodelConnection');
         // console.log(props.imodelConnection);
         console.log('onDeleteButtonClickHandler row');
@@ -252,56 +256,11 @@ export const TowerMountTableComponent = (props: any) => {
         let rowId = row.original.id
         console.log("rowId: ", rowId);
         // props.hideElementFromView(row.original.id);
-        dispatch(deleteElementByIdThunk({iModelRpcProps, elementId: row.original.id}))
-        const tableDataCollection = [...tableData];
-        tableDataCollection.splice(row.id, 1);
-        setTableData(tableDataCollection);
-
-        // const result = await IModelDeleteElementRpcInterface.getClient().deleteElementById(iModelRpcProps, rowId)
-        // console.log("delete result");
-        // console.log(result);
-            // .then((res: any) => {
-            //     console.log("deleteElementById success");
-            //     console.log(res);
-            //     // props.hideElementFromView(row.original.id);
-            //     // const tableDataCollection = [...tableData];
-            //     // tableDataCollection.splice(row.id, 1);
-            //     // setTableData(tableDataCollection);
-            // })
-
-            // .catch((error: any) => {
-            //     console.log("deleteElementById error");
-            //     console.log(error);
-            // })
-
-        // const result: any = await IModelDeleteElementRpcInterface.getClient().deleteElementById({ key: appConfig.briefcaseKey, iModelId: appConfig.auth.iModelId, iTwinId: appConfig.auth.iTwinId }, rowId)
-        // console.log('result');
-        // console.log(result);
-        // const imodelClient = new IModelsClient();
-        // console.log('imodelClient');
-        // console.log(imodelClient);
-
-        // console.log('imodelClient briefcase');
-        // console.log(imodelClient.briefcases.getMinimalList({ iModelId: appConfig.auth.iModelId }));
-        // const token = IModelApp.authorizationClient?.getAccessToken()
-        // const changeSets: any[] = [];
-        // const modelid: string  = process.env.IMJS_IMODEL_ID ? process.env.IMJS_IMODEL_ID : '';
-        // const options:  GetChangesetListParams = {
-        //     iModelId: modelid,
-        //     authorization: getAuthorization
-        // }
-        // const client = new IModelsClient();
-        // const clientChangesets = client.changesets;
-        // const result: any = await clientChangesets.getMinimalList(options);
-        // (await toArray(result)).map((data) => changeSets.push(data));
-        // let lastChangeSetId = changeSets[changeSets.length - 1].id;
-        // console.log(`lastChangeSetId: ${lastChangeSetId}`);
-
-        // console.log('client.userPermissions')
-        // console.log(client.userPermissions)
-        // // createChangeSet(modelid, token, lastChangeSetId)
-
-    }
+        // dispatch(deleteElementByIdThunk({iModelRpcProps, elementId: row.original.id}))
+        // const tableDataCollection = [...tableData];
+        // tableDataCollection.splice(row.id, 1);
+        // setTableData(tableDataCollection);
+    }, [])
 
     return (
         <div className="mount-table-view-block">
@@ -309,11 +268,11 @@ export const TowerMountTableComponent = (props: any) => {
                 columns={columns}
                 emptyTableContent='No data.'
                 data={tableData}
-                density='condensed'
                 onRowClick={onRowClickHandler}
                 selectRowOnClick={true}
                 selectionMode={'single'}
                 isSelectable={true}
+                isLoading={true}
             />
 
         </div>

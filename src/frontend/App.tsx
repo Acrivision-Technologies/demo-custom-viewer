@@ -22,6 +22,8 @@ import { useAppDispatch, useAppSelector } from "./store/hooks";
 import { RootState } from "./store";
 import { updateChangeSetDetails, updateViewClientAndAccessTokenDetails } from "./store/slices/clientIModel";
 import { InitiatedServerThunkDataDto, getLatestChangesetDetailsThunk, initiatedServerThunk } from "./store/asyncThunk/InitiateBackendServerAsyncThunk";
+import getConnectServerRpcs from "../common/connectorServerRpcs";
+
 
 const briefcaseID = Guid.createValue();
 
@@ -35,8 +37,10 @@ const App: React.FC = () => {
     const login = useCallback(async () => {
         console.log("inside login callback")
         try {
-            const result = await authorizationService.getAccessToken()
-            dispatch(updateViewClientAndAccessTokenDetails({ accessToken: result, viewAuthClient: authorizationService._authorizationClient}))
+            const result = await authorizationService.getAccessToken();
+            console.log("------ access token +++++++");
+            console.log(result);
+            dispatch(updateViewClientAndAccessTokenDetails({ accessToken: result, viewAuthClient: authorizationService._authorizationClient }))
         } catch {
             throw new Error("Login failed");
         }
@@ -44,8 +48,19 @@ const App: React.FC = () => {
 
     useEffect(() => {
         console.log("calling login")
+        const connectorServerParams: BentleyCloudRpcParams = { info: { title: "shema-connector-express-server", version: "v1.0" }, uriPrefix: "http://localhost:4003" };
+        BentleyCloudRpcManager.initializeClient(connectorServerParams, getConnectServerRpcs());
+        
+        console.log('getConnectServerRpcs()');
+        console.log(getConnectServerRpcs());
+        
         const cloudParams: BentleyCloudRpcParams = { info: { title: "local-backend-for-bff-concept", version: "v1.0" }, uriPrefix: "http://localhost:3001" };
-      BentleyCloudRpcManager.initializeClient(cloudParams, getSupportedRpcs());
+        BentleyCloudRpcManager.initializeClient(cloudParams, getSupportedRpcs());
+
+        console.log('getSupportedRpcs()');
+        console.log(getSupportedRpcs());
+
+
         void login();
     }, [login]);
 
@@ -71,9 +86,9 @@ const App: React.FC = () => {
     }, [accessToken, iModelId]);
 
     useEffect(() => {
-        if(accessToken && changeSetId && changeSetIndex > 0) {
+        if (accessToken && changeSetId && changeSetIndex > 0) {
             console.log('------- initiatedServerThunk');
-            (async() => {
+            (async () => {
                 console.log("changes applied");
                 console.log('changeSetId')
                 console.log(changeSetId)
@@ -102,7 +117,7 @@ const App: React.FC = () => {
                     </div>
                 </FillCentered>
             )}
-            {accessToken && changeSetId && <CustomViewer iTwinId={iTwinId} iModelId={iModelId} changeSetId={changeSetId} viewAuthClient={viewAuthClient} serverInitiated={serverInitiated}/>}
+            {accessToken && changeSetId && <CustomViewer iTwinId={iTwinId} iModelId={iModelId} changeSetId={changeSetId} viewAuthClient={viewAuthClient} serverInitiated={serverInitiated} />}
         </div>
     );
 };

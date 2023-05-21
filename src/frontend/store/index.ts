@@ -1,6 +1,7 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import clientIModelSlice from './slices/clientIModel'
 import elementCollectionUiSlice from './slices/elementCollectionUi'
+import iModelCreatedSlice from './slices/newlyCreatedClientIModel'
 
 // ...
 
@@ -8,6 +9,7 @@ export const store = configureStore({
   reducer: {
     clientIModel: clientIModelSlice,
     elementCollectionUi: elementCollectionUiSlice,
+    iModelCreated: iModelCreatedSlice,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false })
 })

@@ -8,4 +8,7 @@ export interface ElementCollectionUiProviderSliceState {
     getTowerPhysicalElementTypesRequestState: string;
     getAllPhysicalElementsByTypeThunkRequestState: string;
     deleteElementByIdThunkRequestState: string;
+    updateIModelElementThunkRequestState: string;
+    iModelCreated: boolean;
+    iModelCreationRequestStatus: string;
 }
